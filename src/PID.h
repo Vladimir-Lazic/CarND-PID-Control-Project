@@ -32,10 +32,16 @@ public:
    */
   double TotalError();
 
+  double TotalError(double Kp_, double Ki_, double Kd_);
+
+  void Twiddle();
+
   // Added for debugging purpose 
   double getKi() { return Ki; }
   double getKp() { return Kp; }
   double getKd() { return Kd; }
+
+  bool is_twiddled = false;
 
 private:
   /**

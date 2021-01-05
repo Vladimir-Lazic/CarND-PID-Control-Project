@@ -38,10 +38,10 @@ int main()
     uWS::Hub h;
 
     PID steer_pid;
-    steer_pid.Init(0.15, 0.00005, 2.5);
+    steer_pid.Init(0.0, 0.0, 0.0);
 
     PID throttle_pid;
-    throttle_pid.Init(0.0, 0.0, 15.0);
+    throttle_pid.Init(0.0, 0.0, 0.0);
 
     h.onMessage([&steer_pid, &throttle_pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                                             uWS::OpCode opCode) {
@@ -68,7 +68,17 @@ int main()
                     double throttle_value;
 
                     steer_pid.UpdateError(cte);
+                    if (steer_pid.is_twiddled == false)
+                    {
+                        steer_pid.Twiddle();
+                        steer_pid.is_twiddled = true;
+                    }
+
                     throttle_pid.UpdateError(cte);
+                    if (throttle_pid.is_twiddled == false) {
+                        throttle_pid.Twiddle();
+                        throttle_pid.is_twiddled = true;
+                    }
 
                     steer_value = steer_pid.TotalError();
                     throttle_value = 0.75 - throttle_pid.TotalError();

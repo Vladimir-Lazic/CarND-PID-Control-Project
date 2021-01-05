@@ -4,9 +4,6 @@
 #include <algorithm>
 
 #define TOLERANCE 0.001
-/**
- * TODO: Complete the PID class. You may add any additional desired functions.
- */
 
 PID::PID() {}
 
@@ -54,4 +51,54 @@ void PID::UpdateError(double cte)
 double PID::TotalError()
 {
     return -Kp * p_error - Kd * d_error - Ki * i_error;
+}
+
+double PID::TotalError(double Kp_, double Ki_, double Kd_)
+{
+    return -Kp_ * p_error - Kd_ * d_error - Ki_ * i_error;
+}
+
+void PID::Twiddle()
+{
+    std::vector<double> p = {0.0, 0.0, 0.0};
+    std::vector<double> dp = {1.0, 1.0, 1.0};
+
+    double best_error = TotalError();
+    double error = error_;
+
+    while (std::accumulate(dp.begin(), dp.end(), 0) > TOLERANCE)
+    {
+        for (int i = 0; i < p.size(); i++)
+        {
+            p[i] += dp[i];
+            error = TotalError(p[0], p[1], p[2]);
+
+            if (error < best_error)
+            {
+                best_error = error;
+                dp[i] *= 1.1;
+            }
+            else
+            {
+                p[i] -= 2 * dp[i];
+                error = TotalError(p[0], p[1], p[2]);
+
+                if (error < best_error)
+                {
+                    best_error = error;
+                    dp[i] *= 1.1;
+                }
+                else
+                {
+                    p[i] += dp[i];
+                    dp[i] *= 0.9;
+                }
+            }
+        }
+    }
+    Kp = p[0];
+    Ki = p[1];
+    Kd = p[2];
+
+    error_ = best_error;
 }
