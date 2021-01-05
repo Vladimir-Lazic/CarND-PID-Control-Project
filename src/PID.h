@@ -37,9 +37,6 @@ public:
   double getKp() { return Kp; }
   double getKd() { return Kd; }
 
-  // Retrun the steering angle correction based od PID controller 
-  double getSteeringCorrection(double cte);
-
 private:
   /**
    * PID Errors
