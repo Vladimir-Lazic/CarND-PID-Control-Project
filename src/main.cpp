@@ -38,7 +38,7 @@ int main()
     uWS::Hub h;
 
     PID steer_pid;
-    steer_pid.Init(0.15, 0.0, 2.5);
+    steer_pid.Init(0.15, 0.00005, 2.5);
 
     PID throttle_pid;
     throttle_pid.Init(0.0, 0.0, 15.0);
