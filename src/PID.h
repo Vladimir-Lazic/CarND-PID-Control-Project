@@ -1,8 +1,9 @@
 #ifndef PID_H
 #define PID_H
 
-class PID {
- public:
+class PID
+{
+public:
   /**
    * Constructor
    */
@@ -31,7 +32,15 @@ class PID {
    */
   double TotalError();
 
- private:
+  // Added for debugging purpose 
+  double getKi() { return Ki; }
+  double getKp() { return Kp; }
+  double getKd() { return Kd; }
+
+  // Retrun the steering angle correction based od PID controller 
+  double getSteeringCorrection(double cte);
+
+private:
   /**
    * PID Errors
    */
@@ -41,10 +50,15 @@ class PID {
 
   /**
    * PID Coefficients
-   */ 
+   */
   double Kp;
   double Ki;
   double Kd;
+
+  // Error variables
+  double cte_prev_;
+  double error_;
+  int it_counter;
 };
 
-#endif  // PID_H
+#endif // PID_H
