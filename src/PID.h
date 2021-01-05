@@ -55,7 +55,6 @@ private:
   // Error variables
   double cte_prev_;
   double error_;
-  int it_counter;
 };
 
 #endif // PID_H

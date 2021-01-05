@@ -24,7 +24,6 @@ void PID::Init(double Kp_, double Ki_, double Kd_)
 
     cte_prev_ = 0.0;
     error_ = 0.0;
-    it_counter = 0;
 }
 
 void PID::UpdateError(double cte)
@@ -38,7 +37,6 @@ void PID::UpdateError(double cte)
     cte_prev_ = cte;
 
     error_ += cte;
-    it_counter++;
 
     if (error_ > max_error)
     {
