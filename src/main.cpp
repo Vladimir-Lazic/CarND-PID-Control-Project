@@ -38,10 +38,10 @@ int main()
     uWS::Hub h;
 
     PID steer_pid;
-    steer_pid.Init(0.0, 0.0, 0.0);
+    // steer_pid.Init(0.0, 0.0, 0.0);
 
     PID throttle_pid;
-    throttle_pid.Init(0.0, 0.0, 0.0);
+    // throttle_pid.Init(0.0, 0.0, 0.0);
 
     h.onMessage([&steer_pid, &throttle_pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                                             uWS::OpCode opCode) {
@@ -67,21 +67,29 @@ int main()
                     double steer_value;
                     double throttle_value;
 
-                    steer_pid.UpdateError(cte);
-                    if (steer_pid.is_twiddled == false)
+                    /*if (steer_pid.is_twiddled == false)
                     {
-                        steer_pid.Twiddle();
+                        steer_value = steer_pid.Twiddle(cte);
                         steer_pid.is_twiddled = true;
                     }
+                    else
+                    {
+                        steer_pid.UpdateError(cte);
+                        steer_value = steer_pid.TotalError();
+                    }*/
 
-                    throttle_pid.UpdateError(cte);
-                    if (throttle_pid.is_twiddled == false) {
-                        throttle_pid.Twiddle();
+                    steer_value = steer_pid.Twiddle(cte);
+
+                    if (throttle_pid.is_twiddled == false)
+                    {
+                        throttle_value = throttle_pid.Twiddle(cte);
                         throttle_pid.is_twiddled = true;
                     }
-
-                    steer_value = steer_pid.TotalError();
-                    throttle_value = 0.75 - throttle_pid.TotalError();
+                    else
+                    {
+                        throttle_pid.UpdateError(cte);
+                        throttle_value = 0.75 - throttle_pid.TotalError();
+                    }
 
                     // DEBUG
                     std::cout << "CTE: " << cte << " Steering Value: " << steer_value

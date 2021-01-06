@@ -34,7 +34,7 @@ public:
 
   double TotalError(double Kp_, double Ki_, double Kd_);
 
-  void Twiddle();
+  double Twiddle(double cte);
 
   // Added for debugging purpose 
   double getKi() { return Ki; }

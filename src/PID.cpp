@@ -58,11 +58,12 @@ double PID::TotalError(double Kp_, double Ki_, double Kd_)
     return -Kp_ * p_error - Kd_ * d_error - Ki_ * i_error;
 }
 
-void PID::Twiddle()
+double PID::Twiddle(double cte)
 {
     std::vector<double> p = {0.0, 0.0, 0.0};
     std::vector<double> dp = {1.0, 1.0, 1.0};
 
+    UpdateError(cte);
     double best_error = TotalError();
     double error = error_;
 
@@ -71,7 +72,11 @@ void PID::Twiddle()
         for (int i = 0; i < p.size(); i++)
         {
             p[i] += dp[i];
-            error = TotalError(p[0], p[1], p[2]);
+            Kp = p[0];
+            Ki = p[1];
+            Kd = p[2];
+            UpdateError(cte);
+            error = TotalError();
 
             if (error < best_error)
             {
@@ -81,7 +86,11 @@ void PID::Twiddle()
             else
             {
                 p[i] -= 2 * dp[i];
-                error = TotalError(p[0], p[1], p[2]);
+                Kp = p[0];
+                Ki = p[1];
+                Kd = p[2];
+                UpdateError(cte);
+                error = TotalError();
 
                 if (error < best_error)
                 {
@@ -91,14 +100,15 @@ void PID::Twiddle()
                 else
                 {
                     p[i] += dp[i];
+                    Kp = p[0];
+                    Ki = p[1];
+                    Kd = p[2];
                     dp[i] *= 0.9;
                 }
             }
         }
     }
-    Kp = p[0];
-    Ki = p[1];
-    Kd = p[2];
-
     error_ = best_error;
+
+    return error_;
 }
